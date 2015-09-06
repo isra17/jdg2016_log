@@ -1,0 +1,141 @@
+{
+  "missions": [{
+    "id" : 1,
+    "name": "Mission 1 - Ping",
+    "tests": [
+      {
+        "request": "foobar",
+        "expected": "foobar"
+      },
+      {
+        "request": "does it support space?",
+        "expected": "does it support space?"
+      },
+      {
+        "request": "éà✓",
+        "expected": "éà✓"
+      }
+    ]
+  },{
+    "id" : 2,
+    "name": "Mission 2 - Palindrome",
+    "tests": [
+      {
+        "request": "foobar",
+        "expected": "false"
+      },
+      {
+        "request": "barrab",
+        "expected": "true"
+      },
+      {
+        "request": "xyzazyx",
+        "expected": "true"
+      }
+    ]
+  },{
+    "id" : 3,
+    "name": "Mission 3 - Trie",
+    "tests": [
+      {
+        "request": "6,5,4,3,2,1",
+        "expected": "1,2,3,4,5,6"
+      },
+      {
+        "request": "6345, 234, 945",
+        "expected": "234,945,6345"
+      }
+    ]
+  },{
+    "id" : 4,
+    "name": "Mission 4 - Ping II",
+    "tests": [
+      {
+        "request": "500",
+        "expected": ""
+      }
+    ]
+  },{
+    "id" : 5,
+    "name": "Mission 5 - Recherche de texte",
+    "tests": [
+      {
+        "request": "a;aabbccdda",
+        "expected": "3"
+      },
+      {
+        "request": "bar;foobar",
+        "expected": "1"
+      },
+      {
+        "request": "foo;aabbcc",
+        "expected": "0"
+      }
+    ]
+  },{
+    "id" : 6,
+    "name": "Mission 6 - Parsing",
+    "tests": [
+      {
+        "request": "a.b;(a,((a, 1), (b,42)))",
+        "expected": "42"
+      },
+      {
+        "request": "a.b.c;(a, (b,1))",
+        "expected": "-1"
+      },
+      {
+        "request": "foo.bar;((foo, (bar, 7)),(biz, 3))",
+        "expected": "7"
+      }
+    ]
+  },{
+    "id" : 7,
+    "name": "Mission 7 - Mathématique",
+    "tests": [
+      {
+        "request": "1+4*(3-5)/7",
+        "expected": "0.43"
+      },
+      {
+        "request": "2^4",
+        "expected": "16"
+      },
+      {
+        "request": "cos(1)+e",
+        "expected": "3.26"
+      }
+    ]
+  },{
+    "id" : 8,
+    "name": "Mission 8 - Compter",
+    "tests": [
+      {
+        "request": "a b c",
+        "expected": "a;1 b;1 c;1"
+      },
+      {
+        "request": "aa a aa aa bb",
+        "expected": "a;1 aa;3 bb;1"
+      }
+    ]
+  },{
+    "id" : 9,
+    "name": "Mission 9 - Labyrinthe",
+    "tests": [
+      {
+        "request": "###e#;#.#.#;#...#;#s###",
+        "expected": "D D L L D"
+      }
+    ]
+  },{
+    "id" : 10,
+    "name": "Mission 10 - Labyrinthe II",
+    "tests": [
+      {
+        "request": "/\\           ;\\e\\  /\\      ; \\ \\ \\s\\     ;  \\ \\ \\ \\/\\  ;  / / / /\\ \\ ;  \\ \\/  \\/ / ;   \\  /\\  /  ;    \\/  \\/   ;",
+        "expected": "DR DR DR DL DR DR UR UR UR UL UL"
+      }
+    ]
+  }]
+}
