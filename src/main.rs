@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate bitflags;
+extern crate byteorder;
 extern crate libc;
 extern crate getopts;
 extern crate rustc_serialize;
@@ -14,6 +15,7 @@ use std::error::Error;
 use std::collections::{HashSet};
 
 mod driver;
+mod packet;
 
 use driver::Driver;
 
