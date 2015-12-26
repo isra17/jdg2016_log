@@ -1,28 +1,6 @@
 from subprocess import Popen, PIPE
-import json
-import sys
-
-class AsciiProtocol:
-    def __init__(self, driver):
-        self.driver_ = driver
-
-    def send(self, test_id, mission, test_input):
-        self.driver_.popen_.stdin.write(
-                (':'.join([str(test_id), str(mission), test_input]) + '\n')
-                    .encode())
-
-    def recv(self):
-        try:
-            line = self.driver_.popen_.stdout.readline().decode('utf')
-            if line:
-                fields = line.split(':')
-                if len(fields) != 2:
-                    error('Réponse invalide', self.driver_)
-                return (int(fields[0]), fields[1])
-        except Exception as e:
-            error('Réponse invalide', self.driver_, e)
-
-        error('Aucune réponse reçue', self.driver_)
+from util import error, load_data
+import protocol
 
 class Driver:
     def __init__(self, command):
@@ -40,9 +18,18 @@ class Driver:
                 error('Poignée de main invalide', self, e)
 
             if protocol_flag & 1:
-                pass
+                self.protocol_ = protocol.BinProtocol(self)
             else:
-                self.protocol_ = AsciiProtocol(self)
+                self.protocol_ = protocol.AsciiProtocol(self)
+
+            if protocol_flag & 0b0010:
+                self.protocol_.middlewares.append(protocol.RLE(self))
+
+            if protocol_flag & 0b0100:
+                self.protocol_.middlewares.append(protocol.AES(self))
+
+            if protocol_flag & 0b1000:
+                self.protocol_.middlewares.append(protocol.HMAC(self))
         else:
             error('Aucune pognée de main reçue', self)
 
@@ -56,21 +43,6 @@ class Driver:
 
         return (test['expected'] == response, response)
 
-def error(msg, driver=None, e=None):
-    fmt = '[Erreur] ' + msg
-    if e:
-        fmt += '\nException: [{}] {}'.format(e.__class__.__name__, str(e))
-    print(fmt, file=sys.stderr)
-
-    if driver:
-        stderr = driver.popen_.stderr.read().decode('utf')
-        if stderr:
-            print('Erreur du programme (stderr):\n{}'.format(stderr), file=sys.stderr)
-    sys.exit(-1)
-
-def load_data(path):
-    return json.load(open(path, 'r'))
-
 def run():
     tests_data = load_data('./tests.json')
     driver = Driver('./test.py')
@@ -79,7 +51,10 @@ def run():
         mission_id = data['id']
         for test in data['tests']:
             success, response = driver.challenges(mission_id, test)
-            if not success:
+            if success:
+                print('Challenge "{}" #{} passé'.format(data['name'],
+                                                        mission_id))
+            else:
                 print('Challenge "{}" #{} échoué:\n' \
                       '\tRéponse attendue: {}\n' \
                       '\tRéponse reçue: {}'
