@@ -9,9 +9,15 @@ def error(msg, driver=None, e=None):
         traceback.print_exc()
 
     if driver:
-        stderr = driver.popen_.stderr.read().decode('utf')
+        _, stderr = driver.popen_.communicate(timeout=1)
+        msg = stderr
+        try:
+            msg = stderr.decode('utf')
+        except:
+            pass
+
         if stderr:
-            print('\nErreur du programme (stderr):\n{}'.format(stderr), file=sys.stderr)
+            print('\nErreur du programme (stderr):\n{}'.format(stderr.decode('utf')), file=sys.stderr)
     sys.exit(-1)
 
 def load_data(path):
