@@ -8,6 +8,10 @@
         "expected": "foobar"
       },
       {
+        "request": "aaaaaaaaaaaaaaa",
+        "expected": "aaaaaaaaaaaaaaa"
+      },
+      {
         "request": "does it support space?",
         "expected": "does it support space?"
       },
