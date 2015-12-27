@@ -2,6 +2,7 @@ from util import error
 from Crypto.Cipher import AES
 from Crypto.Hash import HMAC, SHA256
 from Crypto import Random
+import binascii
 import struct
 
 class RLEMiddleware:
@@ -65,7 +66,7 @@ class AESMiddleware:
         data = packet[16:]
         cipher = AES.new(self.key_, AES.MODE_CBC, iv)
         text = cipher.decrypt(data)
-        return text[:text[-1]]
+        return text[:-text[-1]]
 
 class HMACMiddleware:
     def __init__(self, driver):
@@ -85,7 +86,8 @@ class HMACMiddleware:
                     .format(hmac.digest_size, len(packet)), self.driver_)
         data = packet[:-hmac.digest_size]
         signature = packet[-hmac.digest_size:]
-        expected = hmac.update(data).digest()
+        hmac.update(data)
+        expected = hmac.digest()
         if signature != expected:
             error("La signature du HMAC-SHA256 n'est pas valide.\n" \
                     "Reçue: {}\nAttendue: {}"
@@ -135,24 +137,21 @@ class BinProtocol(BaseProtocol):
         error('Aucune réponse reçue', self.driver_)
 
 class AsciiProtocol(BaseProtocol):
-    def __init__(self, driver):
-        self.driver_ = driver
-
     def send(self, test_id, mission, test_input):
-        data = (':'.join([str(test_id), str(mission), test_input]) + '\n') \
+        data = (':'.join([str(test_id), str(mission), test_input])) \
                     .encode()
         data = self.on_send(data)
-        self.driver_.popen_.stdin.write(data)
+        self.driver_.popen_.stdin.write(data + b'\n')
         self.driver_.popen_.stdin.flush()
 
     def recv(self):
         try:
-            line = self.driver_.popen_.stdout.readline().decode('utf')
+            line = self.driver_.popen_.stdout.readline()
             if line:
-                if line[-1] == '\n':
+                if line[-1] == 0xa:
                     line = line[:-1]
 
-                line = self.on_recv(line)
+                line = self.on_recv(line).decode('utf')
                 fields = line.split(':')
                 if len(fields) != 2:
                     error('Réponse invalide: {}'.format(line), self.driver_)

@@ -1,5 +1,6 @@
 from subprocess import Popen, PIPE
 from util import error, load_data
+import sys
 import protocol
 
 class Driver:
@@ -35,29 +36,33 @@ class Driver:
 
     def challenges(self, mission_id, test):
         self.protocol_.send(self.test_id_, mission_id, test['request'])
-        self.test_id_ += 1
 
         test_id, response = self.protocol_.recv()
         if test_id != self.test_id_:
             error('ID de mission invalide: {}'.format(test_id), self)
 
+        self.test_id_ += 1
         return (test['expected'] == response, response)
 
 def run():
     tests_data = load_data('./tests.json')
-    driver = Driver('./test.py')
-    driver.handshake()
-    for data in tests_data['missions']:
-        mission_id = data['id']
-        for test in data['tests']:
-            success, response = driver.challenges(mission_id, test)
-            if success:
-                print('Challenge "{}" #{} passé'.format(data['name'],
-                                                        mission_id))
-            else:
-                print('Challenge "{}" #{} échoué:\n' \
-                      '\tRéponse attendue: {}\n' \
-                      '\tRéponse reçue: {}'
-                      .format(data['name'], mission_id, repr(test['expected']),
-                              repr(response)))
+    driver = Driver(sys.argv[1])
+    try:
+        driver.handshake()
+        for data in tests_data['missions']:
+            mission_id = data['id']
+            for i, test in enumerate(data['tests']):
+                success, response = driver.challenges(mission_id, test)
+                if success:
+                    print('Challenge "{}" #{} passé'.format(data['name'], i+1))
+                else:
+                    print('Challenge "{}" #{} échoué:\n' \
+                          '\tRéponse attendue: {}\n' \
+                          '\tRéponse reçue: {}'
+                          .format(data['name'], i+1, repr(test['expected']),
+                                  repr(response)))
+    except KeyboardInterrupt:
+        import traceback
+        traceback.print_exc()
+        error('Ctrl-C: Arrêt du programme.', driver)
 
