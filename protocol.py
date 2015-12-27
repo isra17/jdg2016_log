@@ -1,7 +1,10 @@
 from util import error
+from Crypto.Cipher import AES
+from Crypto.Hash import HMAC, SHA256
+from Crypto import Random
 import struct
 
-class RLE:
+class RLEMiddleware:
     def __init__(self, driver):
         self.driver_ = driver
 
@@ -37,25 +40,58 @@ class RLE:
             packet += struct.pack('B', b) * count
         return packet
 
-class AES:
+class AESMiddleware:
     def __init__(self, driver):
         self.driver_ = driver
+        self.key_ = b'ThisKeyIsSecuree'
 
     def on_send(self, packet):
-        pass
+        iv = Random.new().read(16)
+        pad_len = 16 - (len(packet) % 16)
+        pad = struct.pack('B', pad_len) * pad_len
+        data = packet + pad
+        cipher = AES.new(self.key_, AES.MODE_CBC, iv)
+        return iv + cipher.encrypt(data)
 
     def on_recv(self, packet):
-        pass
+        if len(packet) < 32:
+            error("La taille d'un paquet chiffré doit être supérieure ou " \
+                    "égale à 32 bytes (IV + 1 block). Taille reçue: {}" \
+                    .format(len(packet)), self.driver_)
+        if len(packet) % 16 != 0:
+            error("La taille d'un paquet chiffré doit être un multiple de 16." \
+                    "Taille reçue: {}".format(len(packet)), self.driver_)
+        iv = packet[:16]
+        data = packet[16:]
+        cipher = AES.new(self.key_, AES.MODE_CBC, iv)
+        text = cipher.decrypt(data)
+        return text[:text[-1]]
 
-class HMAC:
+class HMACMiddleware:
     def __init__(self, driver):
         self.driver_ = driver
+        self.key_ = b'ThisKeyIsSecuree'
 
     def on_send(self, packet):
-        pass
+        hmac = HMAC.new(self.key_, digestmod=SHA256)
+        hmac.update(packet)
+        return packet + hmac.digest()
 
     def on_recv(self, packet):
-        pass
+        hmac = HMAC.new(self.key_, digestmod=SHA256)
+        if len(packet) < hmac.digest_size:
+            error("La taille du paquet doit être supérieure à la taille " \
+                    "d'une signature HMAC-SHA256 ({} bytes). Taille reçue: {}"
+                    .format(hmac.digest_size, len(packet)), self.driver_)
+        data = packet[:-hmac.digest_size]
+        signature = packet[-hmac.digest_size:]
+        expected = hmac.update(data).digest()
+        if signature != expected:
+            error("La signature du HMAC-SHA256 n'est pas valide.\n" \
+                    "Reçue: {}\nAttendue: {}"
+                    .format(binascii.hexlify(signature),
+                            binascii.hexlify(expected)), self.driver_)
+        return data
 
 class BaseProtocol:
     def __init__(self, driver):

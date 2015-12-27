@@ -23,13 +23,13 @@ class Driver:
                 self.protocol_ = protocol.AsciiProtocol(self)
 
             if protocol_flag & 0b0010:
-                self.protocol_.middlewares.append(protocol.RLE(self))
+                self.protocol_.middlewares.append(protocol.RLEMiddleware(self))
 
             if protocol_flag & 0b0100:
-                self.protocol_.middlewares.append(protocol.AES(self))
+                self.protocol_.middlewares.append(protocol.AESMiddleware(self))
 
             if protocol_flag & 0b1000:
-                self.protocol_.middlewares.append(protocol.HMAC(self))
+                self.protocol_.middlewares.append(protocol.HMACMiddleware(self))
         else:
             error('Aucune pognée de main reçue', self)
 

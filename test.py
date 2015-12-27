@@ -31,7 +31,7 @@ def send(test_id, data):
     print('sent: ' + repr(packet), file=sys.stderr)
     sys.stdout.flush()
 
-print(str(0b11))
+print(str(0b1111))
 sys.stdout.flush()
 recv()
 send(1, b'foobar')
