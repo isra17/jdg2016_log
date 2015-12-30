@@ -24,6 +24,11 @@ class Driver:
             else:
                 self.protocol_ = protocol.AsciiProtocol(self)
 
+            if any(x in protocol_flags for x in b'RCS') and \
+                    b'T' in protocol_flags:
+                error('Le protocol binaire doit être utilisé pour supporter'\
+                        ' les fonctionnalitées avancées', self)
+
             if b'R' in protocol_flags:
                 self.protocol_.middlewares.append(protocol.RLEMiddleware(self))
 
