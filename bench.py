@@ -45,13 +45,15 @@ class Driver:
         self.test_id_ += 1
         return (test['expected'] == response, response)
 
-def run():
-    tests_data = load_data('./tests.json')
-    driver = Driver(sys.argv[1])
+def run(target, test_file, include=None):
+    tests_data = load_data(test_file)
+    driver = Driver(target)
     try:
         driver.handshake()
         for data in tests_data['missions']:
             mission_id = data['id']
+            if include and mission_id not in include:
+                continue
             for i, test in enumerate(data['tests']):
                 success, response = driver.challenges(mission_id, test)
                 if success:
