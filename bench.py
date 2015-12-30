@@ -1,5 +1,6 @@
 from subprocess import Popen, PIPE
 from util import error, load_data
+import re
 import sys
 import protocol
 
@@ -11,25 +12,25 @@ class Driver:
                             stdout=PIPE, stderr=PIPE)
 
     def handshake(self):
-        protocol_flag = self.popen_.stdout.readline()
-        if protocol_flag:
-            try:
-                protocol_flag = int(protocol_flag)
-            except ValueError as e:
-                error('Poignée de main invalide', self, e)
+        protocol_flags = self.popen_.stdout.readline()
+        if protocol_flags:
+            if re.match(b'[^TBRCS]', protocol_flags.strip()):
+                error('Poignée de main invalide', self)
 
-            if protocol_flag & 1:
+            if (b'T' in protocol_flags) == (b'B' in protocol_flags):
+                error('Le protocol doit être soit binaire ou texte', self)
+            elif b'B' in protocol_flags:
                 self.protocol_ = protocol.BinProtocol(self)
             else:
                 self.protocol_ = protocol.AsciiProtocol(self)
 
-            if protocol_flag & 0b0010:
+            if b'R' in protocol_flags:
                 self.protocol_.middlewares.append(protocol.RLEMiddleware(self))
 
-            if protocol_flag & 0b0100:
+            if b'C' in protocol_flags:
                 self.protocol_.middlewares.append(protocol.AESMiddleware(self))
 
-            if protocol_flag & 0b1000:
+            if b'S' in protocol_flags:
                 self.protocol_.middlewares.append(protocol.HMACMiddleware(self))
         else:
             error('Aucune pognée de main reçue', self)

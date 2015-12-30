@@ -112,7 +112,7 @@ class BaseProtocol:
 
 class BinProtocol(BaseProtocol):
     def send(self, test_id, mission, test_input):
-        data = struct.pack('<II', test_id, mission) + test_input.encode()
+        data = struct.pack('<IB', test_id, mission) + test_input.encode()
         data = self.on_send(data)
 
         self.driver_.popen_.stdin.write(
