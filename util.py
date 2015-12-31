@@ -6,8 +6,8 @@ class JdGError(Exception):
     pass
 
 def error(msg, driver=None, e=None):
-    fmt = '\n[Erreur] ' + msg
-    print(fmt, file=sys.stderr)
+    fmt = '\n[Erreur] ' + msg + '\n'
+    sys.stderr.write(fmt)
     if e:
         traceback.print_exc()
 
@@ -20,6 +20,6 @@ def error(msg, driver=None, e=None):
             pass
 
         if stderr:
-            print('\nErreur du programme (stderr):\n{}'.format(stderr.decode('utf')), file=sys.stderr)
+            sys.stderr.write('\nErreur du programme (stderr):\n{}\n'.format(stderr.decode('utf')))
     raise JdGError()
 
