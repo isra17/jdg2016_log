@@ -1,0 +1,2 @@
+#!/bin/sh
+python __pycache__/jdg2016.pyc $*
