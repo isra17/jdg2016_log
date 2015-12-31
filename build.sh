@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
 rm -rf build
 mkdir -p build
-python3.5 -m py_compile *.py
-for fn in __pycache__/*.pyc; do mv $fn ${fn//\.cpython-35/}; done
+python3 -m py_compile *.py
+for fn in __pycache__/*.pyc; do mv $fn ${fn//\.cpython-34/}; done
 mv __pycache__ build
 cp jdg2016 build
 cp tests.json build
