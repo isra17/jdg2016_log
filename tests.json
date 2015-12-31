@@ -204,7 +204,8 @@
     "tests": [
       {
         "request": "/\\           ;\\e\\  /\\      ; \\ \\ \\s\\     ;  \\ \\ \\ \\/\\  ;  / / / /\\ \\ ;  \\ \\/  \\/ / ;   \\  /\\  /  ;    \\/  \\/   ;",
-        "expected": "DR DR DR DL DR DR UR UR UR UL UL"
+        "expected": "DR DR DR DL DR DR UR UR UR UL UL",
+        "internal": "###; #e#; # #;## ###;#  #s#;# ## #;#    ##;### # #; #   #; #####"
       }
     ]
   }]
