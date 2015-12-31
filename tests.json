@@ -1,6 +1,7 @@
 {
   "missions": [{
     "id" : 1,
+    "score": 2,
     "name": "Mission 1 - Ping",
     "tests": [
       {
@@ -22,6 +23,7 @@
     ]
   },{
     "id" : 2,
+    "score": 3,
     "name": "Mission 2 - Palindrome",
     "tests": [
       {
@@ -39,6 +41,7 @@
     ]
   },{
     "id" : 3,
+    "score": 3,
     "name": "Mission 3 - Trie",
     "tests": [
       {
@@ -52,15 +55,21 @@
     ]
   },{
     "id" : 4,
-    "name": "Mission 4 - Ping II",
+    "score": 3,
+    "name": "Mission 4 - Compter ",
     "tests": [
       {
-        "request": "500",
-        "expected": ""
+        "request": "a b c",
+        "expected": "a;1 b;1 c;1"
+      },
+      {
+        "request": "aa a aa aa bb",
+        "expected": "a;1 aa;3 bb;1"
       }
     ]
   },{
     "id" : 5,
+    "score": 4,
     "name": "Mission 5 - Recherche de texte",
     "tests": [
       {
@@ -74,32 +83,24 @@
       {
         "request": "foo;aabbcc",
         "expected": "0"
+      },
+      {
+        "request": "aa;aaa",
+        "expected": "2"
+      },
+      {
+        "request": "ololo;wololololo",
+        "expected": "3"
       }
     ]
   },{
     "id" : 6,
-    "name": "Mission 6 - Parsing",
-    "tests": [
-      {
-        "request": "a.b;(a,((a, 1), (b,42)))",
-        "expected": "42"
-      },
-      {
-        "request": "a.b.c;(a, (b,1))",
-        "expected": "-1"
-      },
-      {
-        "request": "foo.bar;((foo, (bar, 7)),(biz, 3))",
-        "expected": "7"
-      }
-    ]
-  },{
-    "id" : 7,
-    "name": "Mission 7 - Mathématique",
+    "score": 4,
+    "name": "Mission 6 - Mathématique",
     "tests": [
       {
         "request": "1+4*(3-5)/7",
-        "expected": "0.43"
+        "expected": "-0.14"
       },
       {
         "request": "2^4",
@@ -111,30 +112,95 @@
       }
     ]
   },{
-    "id" : 8,
-    "name": "Mission 8 - Compter",
+    "id" : 7,
+    "score": 6,
+    "name": "Mission 7 - Ping II",
     "tests": [
       {
-        "request": "a b c",
-        "expected": "a;1 b;1 c;1"
+        "request": "500",
+        "expected": ""
       },
       {
-        "request": "aa a aa aa bb",
-        "expected": "a;1 aa;3 bb;1"
+        "request": "1000",
+        "expected": ""
+      },
+      {
+        "request": "1500",
+        "expected": ""
+      }
+    ]
+  },{
+    "id" : 8,
+    "score": 7,
+    "name": "Mission 8 - Parsing",
+    "tests": [
+      {
+        "request": "a.b;(a, (a, 1), (b, 42), (c, 13))",
+        "expected": "42"
+      },
+      {
+        "request": "a.b.c;(a, (b,1), (c,2))",
+        "expected": "-1"
+      },
+      {
+        "request": "a.b;(a, (b, (c,2)))",
+        "expected": "-1"
+      },
+      {
+        "request": "foo.bar;(foo, (bar, 7),(biz, (a, 1), (b, 2)))",
+        "expected": "7"
       }
     ]
   },{
     "id" : 9,
-    "name": "Mission 9 - Labyrinthe",
+    "score": 10,
+    "name": "ASCII Art",
     "tests": [
       {
-        "request": "###e#;#.#.#;#...#;#s###",
-        "expected": "D D L L D"
+        "request": "##   ##  ### ; #  #  #   ##; #    #  ####;### #### ### ;",
+        "expected": "123"
+      },
+      {
+        "request": "# #     ###;# #      # ;###     #  ; #     #  ;",
+        "expected": "47"
       }
     ]
   },{
     "id" : 10,
-    "name": "Mission 10 - Labyrinthe II",
+    "score": 10,
+    "name": "Mission 10 - Mathematique II",
+    "tests": [
+      {
+        "request": "x=10+1",
+        "expected": "11"
+      },
+      {
+        "request": "1 + x * 1000 = 126 - 2",
+        "expected": "0.12"
+      },
+      {
+        "request": "2 ^ x = 8",
+        "expected": "3"
+      }
+    ]
+  },{
+    "id" : 11,
+    "score": 10,
+    "name": "Mission 11 - Labyrinthe",
+    "tests": [
+      {
+        "request": "###e#;# # #;#   #;#s###",
+        "expected": "D D L L D"
+      },
+      {
+        "request": "#########;#e      #;### # # #;#   # # #;# ### # #;#     s #;#########",
+        "expected": "R R R R D D D D R"
+      }
+    ]
+  },{
+    "id" : 12,
+    "score": 13,
+    "name": "Mission 12 - Labyrinthe II",
     "tests": [
       {
         "request": "/\\           ;\\e\\  /\\      ; \\ \\ \\s\\     ;  \\ \\ \\ \\/\\  ;  / / / /\\ \\ ;  \\ \\/  \\/ / ;   \\  /\\  /  ;    \\/  \\/   ;",
