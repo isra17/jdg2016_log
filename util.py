@@ -2,8 +2,11 @@ import traceback
 import json
 import sys
 
+class JdGError(Exception):
+    pass
+
 def error(msg, driver=None, e=None):
-    fmt = '[Erreur] ' + msg
+    fmt = '\n[Erreur] ' + msg
     print(fmt, file=sys.stderr)
     if e:
         traceback.print_exc()
@@ -18,8 +21,5 @@ def error(msg, driver=None, e=None):
 
         if stderr:
             print('\nErreur du programme (stderr):\n{}'.format(stderr.decode('utf')), file=sys.stderr)
-    sys.exit(-1)
-
-def load_data(path):
-    return json.load(open(path, 'r'))
+    raise JdGError()
 

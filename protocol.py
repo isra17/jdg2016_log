@@ -115,9 +115,12 @@ class BinProtocol(BaseProtocol):
         data = struct.pack('<IB', test_id, mission) + test_input.encode()
         data = self.on_send(data)
 
-        self.driver_.popen_.stdin.write(
-                struct.pack('<I', len(data)) + data)
-        self.driver_.popen_.stdin.flush()
+        try:
+            self.driver_.popen_.stdin.write(
+                    struct.pack('<I', len(data)) + data)
+            self.driver_.popen_.stdin.flush()
+        except BrokenPipeError as e:
+            error('Le programme a fermé stdin', self.driver_, e)
 
     def recv(self):
         try:

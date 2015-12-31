@@ -1,15 +1,16 @@
 from subprocess import Popen, PIPE
-from util import error, load_data
+from util import error, JdGError
 import re
 import sys
 import protocol
+import mission
 
 class Driver:
     def __init__(self, command):
         self.test_id_ = 0
         self.protocol_ = None
         self.popen_ = Popen(args=command, shell=True, stdin=PIPE, \
-                            stdout=PIPE, stderr=PIPE)
+                            stdout=PIPE, stderr=PIPE, bufsize=0)
 
     def handshake(self):
         protocol_flags = self.popen_.stdout.readline()
@@ -40,37 +41,23 @@ class Driver:
         else:
             error('Aucune pognée de main reçue', self)
 
-    def challenges(self, mission_id, test):
-        self.protocol_.send(self.test_id_, mission_id, test['request'])
-
-        test_id, response = self.protocol_.recv()
-        if test_id != self.test_id_:
-            error('ID de mission invalide: {}'.format(test_id), self)
-
-        self.test_id_ += 1
-        return (test['expected'] == response, response)
 
 def run(target, test_file, include=None):
-    tests_data = load_data(test_file)
     driver = Driver(target)
+    missions = mission.MissionManager(driver, include)
+    missions.load(test_file)
     try:
         driver.handshake()
-        for data in tests_data['missions']:
-            mission_id = data['id']
-            if include and mission_id not in include:
-                continue
-            for i, test in enumerate(data['tests']):
-                success, response = driver.challenges(mission_id, test)
-                if success:
-                    print('Challenge "{}" #{} passé'.format(data['name'], i+1))
-                else:
-                    print('Challenge "{}" #{} échoué:\n' \
-                          '\tRéponse attendue: {}\n' \
-                          '\tRéponse reçue: {}'
-                          .format(data['name'], i+1, repr(test['expected']),
-                                  repr(response)))
+        missions.run()
     except KeyboardInterrupt:
         import traceback
         traceback.print_exc()
         error('Ctrl-C: Arrêt du programme.', driver)
+    except JdGError as e:
+        pass
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        pass
+    missions.print_score()
 
