@@ -14,6 +14,7 @@ class Driver:
 
     def handshake(self):
         protocol_flags = self.popen_.stdout.readline()
+        self.protocol_flags = protocol_flags
         if protocol_flags:
             if re.match(b'[^TBRCS]', protocol_flags.strip()):
                 error('Poignée de main invalide', self)

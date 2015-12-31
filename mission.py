@@ -70,13 +70,24 @@ class MissionManager:
         not_run = len(self.to_run)
         no_response = len(self.expected)
         score = sum(m.calc_score() for m in self.results)
-        max_score = sum(m.score for m in self.all_missions)
+        max_score = sum(m.score for m in self.all_missions) + 25
+        protocol_score = self.protocol_score()
+        score +=  protocol_score
         print("\n========== Results ==========")
         print("Nombre total de missions: {}".format(total))
         print("Missions non envoyées: {}".format(not_run))
         print("Missions sans réponse: {}".format(no_response))
-        print("Mission répondue avec succès: {}/{}".format(passed, total))
+        print("Mission répondue avec succès: {}/{}".format(passed, responded))
+        print("Score de support du protocol: {}/{}".format(protocol_score, 25))
         print("SCORE: {:.2f}/{:.2f} [{:.2f}%]".format(score, max_score, (score/max_score)*100))
+
+    def protocol_score(self):
+        return sum([2 if b"T" in self.driver_.protocol_flags else 0,
+                6 if b'B' in self.driver_.protocol_flags else 0,
+                7 if b'R' in self.driver_.protocol_flags else 0,
+                8 if b'C' in self.driver_.protocol_flags else 0,
+                4 if b'S' in self.driver_.protocol_flags else 0])
+
 
 class Mission:
     def __init__(self, mission, test):
@@ -101,5 +112,4 @@ class Mission:
 
     def calc_score(self):
         return self.score if self.result else 0
-
 
