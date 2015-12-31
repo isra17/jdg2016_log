@@ -8,4 +8,5 @@ mv __pycache__ build
 cp jdg2016 build
 cp tests.json build
 cp epreuve.pdf build
-tar zcvf jdg2016.tar.gz build/*
+cd build
+tar zcvf ../jdg2016.tar.gz *
