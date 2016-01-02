@@ -163,7 +163,7 @@ class AsciiProtocol(BaseProtocol):
                 except ValueError:
                     self.driver_.error('Réponse invalide: {}'.format(line))
                 return (r, fields[1])
-        except Exception as e:
+        except RuntimeError as e:
             self.driver_.error('Réponse invalide', e)
 
         self.driver_.error('Aucune réponse reçue')

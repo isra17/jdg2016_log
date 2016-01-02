@@ -11,6 +11,7 @@ class Driver:
         self.protocol_ = None
         self.popen_ = Popen(args=command, shell=True, stdin=PIPE, \
                             stdout=PIPE, stderr=PIPE, bufsize=0)
+        self.protocol_flags = b''
 
     def write(self, data):
         return self.popen_.stdin.write(data)
@@ -54,23 +55,24 @@ class Driver:
         else:
             self.error('Aucune pognée de main reçue %s' % (repr(protocol_flags)))
 
-    def error(self, msg, e=None):
+    def error(self, msg, e=None, raise_ex=True):
         fmt = '\n[Erreur] ' + msg + '\n'
         sys.stderr.write(fmt)
         if e:
             import traceback
             traceback.print_exc()
 
-        _, stderr = self.popen_.communicate(timeout=1)
-        msg = stderr
+        msg = ''
         try:
+            _, stderr = self.popen_.communicate(timeout=1)
             msg = stderr.decode('utf')
         except:
             pass
 
-        if stderr:
+        if msg:
             sys.stderr.write('\nErreur du programme (stderr):\n{}\n'.format(stderr.decode('utf')))
-        raise JdGError()
+        if raise_ex:
+            raise JdGError()
 
 def run(target, test_file, include=None):
     driver = Driver(target)
@@ -80,9 +82,7 @@ def run(target, test_file, include=None):
         driver.handshake()
         missions.run()
     except KeyboardInterrupt:
-        import traceback
-        traceback.print_exc()
-        error('Ctrl-C: Arrêt du programme.', driver)
+        driver.error('Ctrl-C: Arrêt du programme.', raise_ex=False)
     except JdGError as e:
         pass
     except Exception:
