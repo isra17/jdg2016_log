@@ -58,6 +58,7 @@ class Driver:
         fmt = '\n[Erreur] ' + msg + '\n'
         sys.stderr.write(fmt)
         if e:
+            import traceback
             traceback.print_exc()
 
         _, stderr = self.popen_.communicate(timeout=1)
