@@ -140,7 +140,7 @@ class BinProtocol(BaseProtocol):
 
 class AsciiProtocol(BaseProtocol):
     def send(self, test_id, mission, test_input):
-        data = (':'.join([str(test_id), str(mission), test_input])) \
+        data = (':'.join([('%08x' % test_id), str(mission), test_input])) \
                     .encode()
         data = self.on_send(data)
         self.driver_.write(data + b'\n')
