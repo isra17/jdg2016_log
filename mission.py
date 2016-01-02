@@ -36,7 +36,7 @@ class Ping2Mission(Mission):
         self.delay = int(self.test['request'])/1000
 
     def validate(self, response):
-        if reponse == b'':
+        if response == b'':
             print('Challenge "{}" #{} échoué:\n' \
                   '\tRéponse non-vide reçue: {}'
                   .format(self.mission['name'], self.test_id, repr(response)))
