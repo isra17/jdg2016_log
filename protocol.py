@@ -159,7 +159,7 @@ class AsciiProtocol(BaseProtocol):
                     self.driver_.error('Réponse invalide: {}'.format(line))
                 r = None
                 try:
-                    r = int(fields[0])
+                    r = int(fields[0], 16)
                 except ValueError:
                     self.driver_.error('Réponse invalide: {}'.format(line))
                 return (r, fields[1])
