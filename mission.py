@@ -40,7 +40,7 @@ class Ping2Mission(Mission):
             print('Challenge "{}" #{} échoué:\n' \
                   '\tRéponse non-vide reçue: {}'
                   .format(self.mission['name'], self.test_id, repr(response)))
-        elif time.time() < self.send_at + self.delay_ms:
+        elif time.time() < self.send_at + self.delay:
             print('Challenge "{}" #{} échoué:\n' \
                     '\tRéponse reçue avant le délai demandé: {:.3f} s'
                   .format(self.mission['name'], self.test_id, time.time() - self.send_at))
