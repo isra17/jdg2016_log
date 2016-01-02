@@ -116,19 +116,19 @@ class BinProtocol(BaseProtocol):
         data = self.on_send(data)
 
         try:
-            self.driver_.popen_.stdin.write(
+            self.driver_.write(
                     struct.pack('<I', len(data)) + data)
-            self.driver_.popen_.stdin.flush()
+            self.driver_.flush()
         except BrokenPipeError as e:
             error('Le programme a fermé stdin', self.driver_, e)
 
     def recv(self):
         try:
-            data = self.driver_.popen_.stdout.read(4)
+            data = self.driver_.read(4)
             if data:
                 size = struct.unpack('<I', data)[0]
                 if size >= 4:
-                    packet = self.driver_.popen_.stdout.read(size)
+                    packet = self.driver_.read(size)
                     packet = self.on_recv(packet)
                     mission = struct.unpack('<I', packet[:4])[0]
                     return (mission, packet[4:].decode('utf'))
@@ -144,12 +144,12 @@ class AsciiProtocol(BaseProtocol):
         data = (':'.join([str(test_id), str(mission), test_input])) \
                     .encode()
         data = self.on_send(data)
-        self.driver_.popen_.stdin.write(data + b'\n')
-        self.driver_.popen_.stdin.flush()
+        self.driver_.write(data + b'\n')
+        self.driver_.flush()
 
     def recv(self):
         try:
-            line = self.driver_.popen_.stdout.readline()
+            line = self.driver_.readline()
             if line:
                 if line[-1] == 0xa:
                     line = line[:-1]

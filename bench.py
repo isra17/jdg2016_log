@@ -12,6 +12,18 @@ class Driver:
         self.popen_ = Popen(args=command, shell=True, stdin=PIPE, \
                             stdout=PIPE, stderr=PIPE, bufsize=0)
 
+    def write(data):
+        return self.popen_.stdin.write(data)
+
+    def read(size):
+        return self.popen_.stdout.read(size)
+
+    def readline():
+        return self.popen_.stdout.readline()
+
+    def flush():
+        return self.popen_.stdout.flush()
+
     def handshake(self):
         protocol_flags = self.popen_.stdout.readline()
         self.protocol_flags = protocol_flags
