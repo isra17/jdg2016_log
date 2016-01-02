@@ -1,4 +1,3 @@
-from util import error
 from Crypto.Cipher import AES
 from Crypto.Hash import HMAC, SHA256
 from Crypto import Random

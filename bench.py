@@ -1,5 +1,5 @@
 from subprocess import Popen, PIPE
-from util import error, JdGError
+from util import JdGError
 import re
 import sys
 import protocol
@@ -29,10 +29,10 @@ class Driver:
         self.protocol_flags = protocol_flags
         if protocol_flags:
             if re.match(b'[^TBRCS]', protocol_flags.strip()):
-                error('Poignée de main invalide', self)
+                self.error('Poignée de main invalide')
 
             if (b'T' in protocol_flags) == (b'B' in protocol_flags):
-                error('Le protocol doit être soit binaire ou texte', self)
+                self.error('Le protocol doit être soit binaire ou texte')
             elif b'B' in protocol_flags:
                 self.protocol_ = protocol.BinProtocol(self)
             else:
@@ -40,8 +40,8 @@ class Driver:
 
             if any(x in protocol_flags for x in b'RCS') and \
                     b'T' in protocol_flags:
-                error('Le protocol binaire doit être utilisé pour supporter'\
-                        ' les fonctionnalitées avancées', self)
+                self.error('Le protocol binaire doit être utilisé pour supporter'\
+                        ' les fonctionnalitées avancées')
 
             if b'R' in protocol_flags:
                 self.protocol_.middlewares.append(protocol.RLEMiddleware(self))
@@ -52,7 +52,7 @@ class Driver:
             if b'S' in protocol_flags:
                 self.protocol_.middlewares.append(protocol.HMACMiddleware(self))
         else:
-            error('Aucune pognée de main reçue', self)
+            self.error('Aucune pognée de main reçue %s' % (repr(protocol_flags)))
 
     def error(self, msg, e=None):
         fmt = '\n[Erreur] ' + msg + '\n'

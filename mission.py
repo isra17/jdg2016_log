@@ -1,4 +1,3 @@
-from util import error
 import time
 import json
 import select
