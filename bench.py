@@ -12,16 +12,16 @@ class Driver:
         self.popen_ = Popen(args=command, shell=True, stdin=PIPE, \
                             stdout=PIPE, stderr=PIPE, bufsize=0)
 
-    def write(data):
+    def write(self, data):
         return self.popen_.stdin.write(data)
 
-    def read(size):
+    def read(self, size):
         return self.popen_.stdout.read(size)
 
-    def readline():
+    def readline(self):
         return self.popen_.stdout.readline()
 
-    def flush():
+    def flush(self):
         return self.popen_.stdout.flush()
 
     def handshake(self):
