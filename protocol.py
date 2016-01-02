@@ -157,7 +157,12 @@ class AsciiProtocol(BaseProtocol):
                 fields = line.split(':')
                 if len(fields) != 2:
                     self.driver_.error('Réponse invalide: {}'.format(line))
-                return (int(fields[0]), fields[1])
+                r = None
+                try:
+                    r = int(fields[0])
+                except ValueError:
+                    self.driver_.error('Réponse invalide: {}'.format(line))
+                return (r, fields[1])
         except Exception as e:
             self.driver_.error('Réponse invalide', e)
 
