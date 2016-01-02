@@ -56,12 +56,12 @@ class AESMiddleware:
 
     def on_recv(self, packet):
         if len(packet) < 32:
-            error("La taille d'un paquet chiffré doit être supérieure ou " \
+            self.driver_.error("La taille d'un paquet chiffré doit être supérieure ou " \
                     "égale à 32 bytes (IV + 1 block). Taille reçue: {}" \
-                    .format(len(packet)), self.driver_)
+                    .format(len(packet)))
         if len(packet) % 16 != 0:
-            error("La taille d'un paquet chiffré doit être un multiple de 16." \
-                    "Taille reçue: {}".format(len(packet)), self.driver_)
+            self.driver_.error("La taille d'un paquet chiffré doit être un multiple de 16." \
+                    "Taille reçue: {}".format(len(packet)))
         iv = packet[:16]
         data = packet[16:]
         cipher = AES.new(self.key_, AES.MODE_CBC, iv)
@@ -81,18 +81,18 @@ class HMACMiddleware:
     def on_recv(self, packet):
         hmac = HMAC.new(self.key_, digestmod=SHA256)
         if len(packet) < hmac.digest_size:
-            error("La taille du paquet doit être supérieure à la taille " \
+            self.driver_.error("La taille du paquet doit être supérieure à la taille " \
                     "d'une signature HMAC-SHA256 ({} bytes). Taille reçue: {}"
-                    .format(hmac.digest_size, len(packet)), self.driver_)
+                    .format(hmac.digest_size, len(packet)))
         data = packet[:-hmac.digest_size]
         signature = packet[-hmac.digest_size:]
         hmac.update(data)
         expected = hmac.digest()
         if signature != expected:
-            error("La signature du HMAC-SHA256 n'est pas valide.\n" \
+            self.driver_.error("La signature du HMAC-SHA256 n'est pas valide.\n" \
                     "Reçue: {}\nAttendue: {}"
                     .format(binascii.hexlify(signature),
-                            binascii.hexlify(expected)), self.driver_)
+                            binascii.hexlify(expected)))
         return data
 
 class BaseProtocol:
@@ -120,7 +120,7 @@ class BinProtocol(BaseProtocol):
                     struct.pack('<I', len(data)) + data)
             self.driver_.flush()
         except BrokenPipeError as e:
-            error('Le programme a fermé stdin', self.driver_, e)
+            self.driver_.error('Le programme a fermé stdin', e)
 
     def recv(self):
         try:
@@ -133,11 +133,11 @@ class BinProtocol(BaseProtocol):
                     mission = struct.unpack('<I', packet[:4])[0]
                     return (mission, packet[4:].decode('utf'))
                 else:
-                    error('Taille de réponse invalide: {}'.format(size), self.driver_)
+                    self.driver_.error('Taille de réponse invalide: {}'.format(size))
         except Exception as e:
-            error('Réponse invalide', self.driver_, e)
+            self.driver_.error('Réponse invalide', e)
 
-        error('Aucune réponse reçue', self.driver_)
+        self.driver_.error('Aucune réponse reçue')
 
 class AsciiProtocol(BaseProtocol):
     def send(self, test_id, mission, test_input):
@@ -157,10 +157,10 @@ class AsciiProtocol(BaseProtocol):
                 line = self.on_recv(line).decode('utf')
                 fields = line.split(':')
                 if len(fields) != 2:
-                    error('Réponse invalide: {}'.format(line), self.driver_)
+                    self.driver_.error('Réponse invalide: {}'.format(line))
                 return (int(fields[0]), fields[1])
         except Exception as e:
-            error('Réponse invalide', self.driver_, e)
+            self.driver_.error('Réponse invalide', e)
 
-        error('Aucune réponse reçue', self.driver_)
+        self.driver_.error('Aucune réponse reçue')
 

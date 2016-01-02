@@ -54,6 +54,22 @@ class Driver:
         else:
             error('Aucune pognée de main reçue', self)
 
+    def error(self, msg, e=None):
+        fmt = '\n[Erreur] ' + msg + '\n'
+        sys.stderr.write(fmt)
+        if e:
+            traceback.print_exc()
+
+        _, stderr = self.popen_.communicate(timeout=1)
+        msg = stderr
+        try:
+            msg = stderr.decode('utf')
+        except:
+            pass
+
+        if stderr:
+            sys.stderr.write('\nErreur du programme (stderr):\n{}\n'.format(stderr.decode('utf')))
+        raise JdGError()
 
 def run(target, test_file, include=None):
     driver = Driver(target)
