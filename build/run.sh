@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 # Ce script est un exemple pour exécuter votre solution
-python2 solution.py
+python3 solution.py
 
 # Décomentez les lignes suivantes si vous utilisez Java:
 # javac solution.java &> /dev/null
